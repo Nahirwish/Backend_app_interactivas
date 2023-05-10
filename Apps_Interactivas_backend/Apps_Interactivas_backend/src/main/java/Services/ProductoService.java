@@ -12,6 +12,7 @@ import java.util.List;
 
 import static javax.security.auth.callback.ConfirmationCallback.OK;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Service
 public class ProductoService {
@@ -22,22 +23,31 @@ public class ProductoService {
         this.pr = pr;
     }
 
-    public List<ProductoDTO> getAll(){
+    public List<Producto> getAll(){
         return pr.findAll();
     }
 
     public ResponseEntity update(Integer id, Producto nuevoProducto){
-        Producto p = pr.findById(id).orElseThrow(()->new HttpClientErrorException(HttpStatus.BAD_REQUEST, "OBJETO NO ENCONTRADO"));
-        p.setNombre(nuevoProducto.getNombre());
-        p.setDescripcion(nuevoProducto.getDescripcion());
-        p.save(p);
-        return ResponseEntity.status(OK).build();
+        try {
+            Producto p = pr.findById(id).orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, "estudiante no encontrado"));
+            p.setIdProducto(p.getIdProducto());
+            p.setNombre(nuevoProducto.getNombre());
+            p.setDescripcion(nuevoProducto.getDescripcion());
+            pr.save(p);
+            return ResponseEntity.status(OK).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
+        }
     }
 
 
     public ResponseEntity addProducto(Producto p){
-        pr.save(p);
-        return ResponseEntity.status(CREATED).build();
+        try {
+            pr.save(p);
+            return ResponseEntity.status(CREATED).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     public Producto getProducto(Integer id){

@@ -1,8 +1,6 @@
 package Controllers;
 
-import Models.Cliente;
 import Models.Producto;
-import Models.ProductoDTO;
 import Services.ProductoService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +39,7 @@ public class ProductoController {
     }
 
     @GetMapping("")
-    public List<ProductoDTO> getAll(){
+    public List<Producto> getAll(){
         return ps.getAll();
     }
 

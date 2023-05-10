@@ -9,8 +9,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 @Service
 
@@ -30,16 +29,24 @@ public class ClienteService {
 
 
     public ResponseEntity update(int id, Cliente clienteNuevo) {
-        Cliente cl = cr.findById(id).orElseThrow(()->new HttpClientErrorException(HttpStatus.BAD_REQUEST, "OBJETO NO ENCONTRADO"));
-        cl.setNombre(clienteNuevo.getNombre());
-        cl.setIdCliente(clienteNuevo.getIdCliente());
-        cr.save(cl);
-        return ResponseEntity.status(OK).build();
+        try {
+            Cliente cl = cr.findById(id).orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, "OBJETO NO ENCONTRADO"));
+            cl.setNombre(clienteNuevo.getNombre());
+            cl.setIdCliente(clienteNuevo.getIdCliente());
+            cr.save(cl);
+            return ResponseEntity.status(OK).build();
+        }catch (Exception e){
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     public ResponseEntity addCliente(Cliente c){
-        cr.save(c);
-        return ResponseEntity.status(CREATED).build();
+        try {
+            cr.save(c);
+            return ResponseEntity.status(CREATED).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
+        }
 
     }
 
