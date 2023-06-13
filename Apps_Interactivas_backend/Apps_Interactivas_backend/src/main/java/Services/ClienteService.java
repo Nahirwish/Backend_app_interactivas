@@ -1,6 +1,7 @@
 package Services;
 import Models.Cliente;
 import Repositories.ClienteRepository;
+import Repositories.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +17,12 @@ import static org.springframework.http.HttpStatus.*;
 
 public class ClienteService {
     private final ClienteRepository cr;
+    private final ProductoRepository pr;
 
     @Autowired
-    public ClienteService(ClienteRepository cr){
+    public ClienteService(ClienteRepository cr, ProductoRepository pr){
         this.cr = cr;
+        this.pr = pr;
 
     }
 
@@ -28,13 +31,11 @@ public class ClienteService {
     }
 
 
-    public ResponseEntity update(int id, Cliente clienteNuevo) {
+    public ResponseEntity update(Cliente c, Integer product_id) {
         try {
-            Cliente cl = cr.findById(id).orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, "OBJETO NO ENCONTRADO"));
-            cl.setNombre(clienteNuevo.getNombre());
-            cl.setIdCliente(clienteNuevo.getIdCliente());
-            cr.save(cl);
-            return ResponseEntity.status(OK).build();
+            c.getProductos().add(pr.findById(product_id).get());
+            cr.save(c);
+            return ResponseEntity.status(CREATED).build();
         }catch (Exception e){
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
         }

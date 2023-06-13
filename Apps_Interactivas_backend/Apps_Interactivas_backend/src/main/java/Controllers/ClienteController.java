@@ -22,7 +22,7 @@ public class ClienteController {
 
     @PostMapping("/{id}/update") //URL
     public ResponseEntity updateCliente(@PathVariable final  @NonNull Integer id, @RequestBody final @NonNull Cliente cl){
-        return cs.update(id, cl);
+        return cs.update(cl, id);
 
     }
 
